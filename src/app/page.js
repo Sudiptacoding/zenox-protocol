@@ -1,69 +1,188 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import { useState, useEffect } from 'react';
+import { signIn } from 'next-auth/react';
+
+export default function LoginPage() {
+  const [timeLeft, setTimeLeft] = useState({
+    days: '06',
+    hours: '19',
+    minutes: '21',
+    seconds: '33',
+  });
+
+  useEffect(() => {
+    const targetDate = new Date('2026-10-15T20:44:00').getTime();
+
+    const timer = setInterval(() => {
+      const now = new Date().getTime();
+      const difference = targetDate - now;
+
+      if (difference > 0) {
+        const d = Math.floor(difference / (1000 * 60 * 60 * 24));
+        const h = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const m = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+        const s = Math.floor((difference % (1000 * 60)) / 1000);
+
+        setTimeLeft({
+          days: String(d).padStart(2, '0'),
+          hours: String(h).padStart(2, '0'),
+          minutes: String(m).padStart(2, '0'),
+          seconds: String(s).padStart(2, '0'),
+        });
+      }
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert h-5 w-[100px]"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the{" "}
-            <code className="rounded bg-black/[.06] px-1.5 py-0.5 font-mono text-[0.9em] dark:bg-white/[.08]">
-              page.js
-            </code>{" "}
-            file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="relative min-h-screen w-full flex flex-col items-center justify-between p-4 overflow-hidden bg-black font-chakra select-none">
+      
+      {/* 1. Background Video & Vignette */}
+      <div className="absolute inset-0 z-0 overflow-hidden">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover opacity-40 filter brightness-75 contrast-125"
+        >
+          <source src="/videos/corporate-city.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-radial-vignette pointer-events-none" />
+      </div>
+
+      {/* 2. Brand Header */}
+      <header className="relative z-10 pt-6 flex items-center justify-center">
+        <div className="flex items-center gap-2 bg-black/50 px-4 py-1.5 rounded-full border border-white/10 backdrop-blur-md">
+          <div className="w-6 h-6 rounded-full border border-[#00e699] flex items-center justify-center bg-[#00e699]/10">
+            <svg className="w-3.5 h-3.5 text-[#00e699]" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+            </svg>
+          </div>
+          <span className="text-lg md:text-xl font-bold tracking-[0.2em] text-white uppercase">
+            ZENOX PROTOCOL
+          </span>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert h-[14px] w-4"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </header>
+
+      {/* 3. Main Card & Countdown Section */}
+      <section className="relative z-10 my-auto flex flex-col items-center text-center max-w-lg w-full px-2">
+        
+        <span className="text-xs md:text-sm font-bold tracking-[0.25em] text-[#00e699] uppercase mb-1">
+          EARLY USER CAMPAIGN
+        </span>
+
+        {/* Amount in Pixel Font */}
+        <h1 className="text-4xl sm:text-6xl md:text-7xl font-bold tracking-tight text-white font-pixel my-2 drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+          $150,000
+        </h1>
+
+        <p className="text-xs md:text-sm tracking-[0.3em] text-gray-300 font-semibold uppercase mb-2">
+          VAULT ALLOCATION
+        </p>
+
+        <p className="text-[11px] text-gray-400 mb-4">
+          Ends Oct 15, 2026, 8:44 PM
+        </p>
+
+        <button className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#00e699]/40 bg-[#00e699]/10 text-[#00e699] text-xs font-semibold mb-8 backdrop-blur-md">
+          <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>View reward details</span>
+        </button>
+
+        <span className="text-[10px] font-bold tracking-[0.3em] text-gray-400 uppercase mb-3">
+          ENDS IN
+        </span>
+
+        {/* Timer Box Grid */}
+        <div className="grid grid-cols-4 gap-2 sm:gap-3.5 w-full max-w-md mb-8">
+          
+          <div className="flex flex-col items-center">
+            <div className="w-full aspect-square bg-[#031c14]/90 border border-[#00e699]/40 rounded-2xl flex items-center justify-center backdrop-blur-md">
+              <span className="text-2xl sm:text-4xl font-bold text-white font-pixel">
+                {timeLeft.days}
+              </span>
+            </div>
+            <span className="text-[10px] font-semibold tracking-widest text-gray-400 uppercase mt-2">DAYS</span>
+          </div>
+
+          <div className="flex flex-col items-center">
+            <div className="w-full aspect-square bg-[#031c14]/90 border border-[#00e699]/40 rounded-2xl flex items-center justify-center backdrop-blur-md">
+              <span className="text-2xl sm:text-4xl font-bold text-white font-pixel">
+                {timeLeft.hours}
+              </span>
+            </div>
+            <span className="text-[10px] font-semibold tracking-widest text-gray-400 uppercase mt-2">HOURS</span>
+          </div>
+
+          <div className="flex flex-col items-center">
+            <div className="w-full aspect-square bg-[#031c14]/90 border border-[#00e699]/40 rounded-2xl flex items-center justify-center backdrop-blur-md">
+              <span className="text-2xl sm:text-4xl font-bold text-white font-pixel">
+                {timeLeft.minutes}
+              </span>
+            </div>
+            <span className="text-[10px] font-semibold tracking-widest text-gray-400 uppercase mt-2">MIN</span>
+          </div>
+
+          <div className="flex flex-col items-center">
+            <div className="w-full aspect-square bg-[#031c14]/90 border border-[#00e699]/40 rounded-2xl flex items-center justify-center backdrop-blur-md">
+              <span className="text-2xl sm:text-4xl font-bold text-white font-pixel">
+                {timeLeft.seconds}
+              </span>
+            </div>
+            <span className="text-[10px] font-semibold tracking-widest text-gray-400 uppercase mt-2">SEC</span>
+          </div>
+
         </div>
-      </main>
-    </div>
+
+        {/* Login Buttons */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-md mb-6">
+          <button
+            onClick={() => signIn('twitter')}
+            className="w-full py-3 px-4 rounded-xl bg-[#00e699] hover:bg-[#00c784] text-black font-bold text-sm flex items-center justify-center gap-2 transition-all"
+          >
+            <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
+            </svg>
+            <span>Continue with X</span>
+          </button>
+
+          <button
+            onClick={() => signIn('google')}
+            className="w-full py-3 px-4 rounded-xl bg-[#00e699] hover:bg-[#00c784] text-black font-bold text-sm flex items-center justify-center gap-2 transition-all"
+          >
+            <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
+              <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z" />
+            </svg>
+            <span>Continue with Google</span>
+          </button>
+        </div>
+
+        <p className="text-[11px] text-gray-400">
+          By continuing you accept the{' '}
+          <a href="#" className="underline text-gray-300">Rules</a> and{' '}
+          <a href="#" className="underline text-gray-300">Privacy Policy</a>
+        </p>
+
+      </section>
+
+      {/* 4. Footer */}
+      <footer className="relative z-10 pb-4">
+        <div className="flex items-center gap-2.5 px-4 py-2 rounded-xl bg-black/80 border border-amber-500/40 text-amber-400 text-xs font-bold uppercase backdrop-blur-md">
+          <div className="w-6 h-6 rounded-md bg-amber-500 text-black flex items-center justify-center font-extrabold text-xs">
+            YZ
+          </div>
+          <div className="flex flex-col text-left leading-tight">
+            <span className="text-[9px] text-gray-400 font-semibold">BACKED BY</span>
+            <span className="text-white text-xs tracking-widest font-extrabold">YZI LABS</span>
+          </div>
+        </div>
+      </footer>
+
+    </main>
   );
 }
