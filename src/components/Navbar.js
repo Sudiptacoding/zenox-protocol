@@ -68,14 +68,29 @@ export default function Navbar({ user, onRefresh }) {
       <div className="max-w-6xl mx-auto flex items-center justify-between">
         
         {/* LOGO */}
-        <div className="flex items-center gap-2">
+        {/* <div className="flex items-center gap-2">
           <div className="w-8 h-8 rounded-full bg-[#00e699] text-black font-pixel font-bold flex items-center justify-center text-sm shadow-[0_0_10px_rgba(0,230,153,0.5)]">
             Z
           </div>
           <span className="font-pixel font-bold text-lg tracking-wider text-white">
             ZENOX
           </span>
-        </div>
+        </div> */}
+
+{/* LOGO */}
+<div className="flex items-center gap-3 min-w-0">
+  <img
+    src="/logos/logo.png"
+    alt="Zenox Protocol Logo"
+    className="w-12 h-12 object-contain shrink-0 rounded-full shadow-[0_0_10px_rgba(0,230,153,0.5)]"
+  />
+
+  <span className="font-pixel font-bold text-lg tracking-wider text-white whitespace-nowrap">
+    ZENOX
+  </span>
+</div>
+
+
 
         {/* TOP RIGHT USER SUMMARY */}
         <div className="flex items-center gap-3">
