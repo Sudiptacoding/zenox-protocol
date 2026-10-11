@@ -1,8 +1,9 @@
+
 @import "tailwindcss";
 
 @theme {
-  --font-chakra: var(--font-chakra), sans-serif;
-  --font-pixel: var(--font-pixel), monospace;
+  --font-chakra: "Chakra Petch", sans-serif;
+  --font-pixel: "Press Start 2P", monospace;
 }
 
 :root {
