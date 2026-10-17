@@ -1,9 +1,15 @@
+
+
 // 'use client';
 
 // import { useState, useEffect } from 'react';
-// import { signIn } from 'next-auth/react';
+// import { signIn, useSession } from 'next-auth/react';
+// import { useRouter } from 'next/navigation';
 
 // export default function LoginPage() {
+//   const { status } = useSession();
+//   const router = useRouter();
+
 //   const [timeLeft, setTimeLeft] = useState({
 //     days: '06',
 //     hours: '19',
@@ -11,6 +17,14 @@
 //     seconds: '33',
 //   });
 
+//   // 1. Auto-Redirect: Logged in user-ke auto /dashboard e pathabe
+//   useEffect(() => {
+//     if (status === 'authenticated') {
+//       router.push('/dashboard');
+//     }
+//   }, [status, router]);
+
+//   // 2. Real-time Countdown Logic targeting Oct 15, 2026
 //   useEffect(() => {
 //     const targetDate = new Date('2026-10-15T20:44:00').getTime();
 
@@ -35,6 +49,15 @@
 
 //     return () => clearInterval(timer);
 //   }, []);
+
+//   // Loading indicator for smooth authentication state resolution
+//   if (status === 'loading') {
+//     return (
+//       <div className="min-h-screen bg-black flex items-center justify-center text-[#00e699] font-pixel text-xs tracking-widest">
+//         INITIALIZING ZENOX SYSTEM...
+//       </div>
+//     );
+//   }
 
 //   return (
 //     <main className="relative min-h-screen w-full flex flex-col items-center justify-between p-4 overflow-hidden bg-black font-chakra select-none">
@@ -87,7 +110,7 @@
 //           Ends Oct 15, 2026, 8:44 PM
 //         </p>
 
-//         <button className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#00e699]/40 bg-[#00e699]/10 text-[#00e699] text-xs font-semibold mb-8 backdrop-blur-md">
+//         <button className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#00e699]/40 bg-[#00e699]/10 text-[#00e699] text-xs font-semibold mb-8 backdrop-blur-md hover:bg-[#00e699]/20 transition-all cursor-pointer">
 //           <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 //             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
 //           </svg>
@@ -142,8 +165,8 @@
 //         {/* Login Buttons */}
 //         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full max-w-md mb-6">
 //           <button
-//             onClick={() => signIn('twitter')}
-//             className="w-full py-3 px-4 rounded-xl bg-[#00e699] hover:bg-[#00c784] text-black font-bold text-sm flex items-center justify-center gap-2 transition-all"
+//             onClick={() => signIn('twitter', { callbackUrl: '/dashboard' })}
+//             className="w-full py-3 px-4 rounded-xl bg-[#00e699] hover:bg-[#00c784] text-black font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[0_0_15px_rgba(0,230,153,0.3)]"
 //           >
 //             <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
 //               <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -152,8 +175,8 @@
 //           </button>
 
 //           <button
-//             onClick={() => signIn('google')}
-//             className="w-full py-3 px-4 rounded-xl bg-[#00e699] hover:bg-[#00c784] text-black font-bold text-sm flex items-center justify-center gap-2 transition-all"
+//             onClick={() => signIn('google', { callbackUrl: '/dashboard' })}
+//             className="w-full py-3 px-4 rounded-xl bg-[#00e699] hover:bg-[#00c784] text-black font-bold text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-[0_0_15px_rgba(0,230,153,0.3)]"
 //           >
 //             <svg className="w-4 h-4 fill-current" viewBox="0 0 24 24">
 //               <path d="M12.48 10.92v3.28h7.84c-.24 1.84-.853 3.187-1.787 4.133-1.147 1.147-2.933 2.4-6.053 2.4-4.827 0-8.6-3.893-8.6-8.72s3.773-8.72 8.6-8.72c2.6 0 4.507 1.027 5.907 2.347l2.307-2.307C18.747 1.44 16.133 0 12.48 0 5.867 0 .307 5.387.307 12s5.56 12 12.173 12c3.573 0 6.267-1.173 8.373-3.36 2.16-2.16 2.84-5.213 2.84-7.667 0-.76-.053-1.467-.173-2.053H12.48z" />
@@ -164,8 +187,8 @@
 
 //         <p className="text-[11px] text-gray-400">
 //           By continuing you accept the{' '}
-//           <a href="#" className="underline text-gray-300">Rules</a> and{' '}
-//           <a href="#" className="underline text-gray-300">Privacy Policy</a>
+//           <a href="#" className="underline text-gray-300 hover:text-[#00e699]">Rules</a> and{' '}
+//           <a href="#" className="underline text-gray-300 hover:text-[#00e699]">Privacy Policy</a>
 //         </p>
 
 //       </section>
@@ -186,6 +209,8 @@
 //     </main>
 //   );
 // }
+
+
 
 
 'use client';
@@ -212,9 +237,22 @@ export default function LoginPage() {
     }
   }, [status, router]);
 
-  // 2. Real-time Countdown Logic targeting Oct 15, 2026
+  // 2. Real-time Countdown Logic (Dynamic Future Proof)
   useEffect(() => {
-    const targetDate = new Date('2026-10-15T20:44:00').getTime();
+    // ফিক্সড ডেটের পরিবর্তে বর্তমান সময় থেকে সবসময় ৭ দিন বা ভবিষ্যতের একটি টার্গেট ডেট সেট করা হলো, 
+    // যাতে হোস্টিং বা লাইভ করার পর টাইমার জিরো হয়ে বন্ধ হয়ে না যায়।
+    const targetKey = 'zenox_campaign_target_time';
+    let savedTarget = localStorage.getItem(targetKey);
+    
+    let targetDate;
+    if (savedTarget) {
+      targetDate = new Date(savedTarget).getTime();
+    } else {
+      // যদি ব্রাউজারে সেভ না থাকে, তবে আজকের থেকে ঠিক ৭ দিন পরের সময় টার্গেট হিসেবে ধরে নেবে
+      const futureDate = new Date().getTime() + 7 * 24 * 60 * 60 * 1000;
+      localStorage.setItem(targetKey, new Date(futureDate).toISOString());
+      targetDate = futureDate;
+    }
 
     const timer = setInterval(() => {
       const now = new Date().getTime();
@@ -232,6 +270,10 @@ export default function LoginPage() {
           minutes: String(m).padStart(2, '0'),
           seconds: String(s).padStart(2, '0'),
         });
+      } else {
+        // সময় শেষ হয়ে গেলে আবার স্বয়ংক্রিয়ভাবে নতুন ৭ দিন যোগ করে দিবে, যাতে টাইমার কখনো অফ না হয়
+        const newFuture = new Date().getTime() + 7 * 24 * 60 * 60 * 1000;
+        localStorage.setItem(targetKey, new Date(newFuture).toISOString());
       }
     }, 1000);
 
@@ -295,7 +337,7 @@ export default function LoginPage() {
         </p>
 
         <p className="text-[11px] text-gray-400 mb-4">
-          Ends Oct 15, 2026, 8:44 PM
+          Limited Time Early Access Campaign
         </p>
 
         <button className="flex items-center gap-2 px-4 py-1.5 rounded-full border border-[#00e699]/40 bg-[#00e699]/10 text-[#00e699] text-xs font-semibold mb-8 backdrop-blur-md hover:bg-[#00e699]/20 transition-all cursor-pointer">
@@ -397,7 +439,3 @@ export default function LoginPage() {
     </main>
   );
 }
-
-
-
-

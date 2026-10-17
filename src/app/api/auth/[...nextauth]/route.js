@@ -96,13 +96,13 @@ export const authOptions = {
       },
     }),
   ],
-  callbacks: {
+
+callbacks: {
     async signIn({ user, account, profile }) {
       try {
         const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://zenox-protocol-backend.vercel.app/api";
         const userEmail = user.email || `${account.providerAccountId}@twitter.com`;
 
-        // Extracting actual username and followers
         const twitterHandle = profile?.data?.username || user.username || user.name.toLowerCase().replace(/\s+/g, '');
         const twitterFollowers = profile?.data?.public_metrics?.followers_count || 0;
 
@@ -124,10 +124,23 @@ export const authOptions = {
         return true;
       }
     },
-    async jwt({ token, user }) {
+    async jwt({ token, user, trigger, session }) {
       if (user) {
         token.backendToken = user.backendToken;
         token.dbData = user.dbData;
+      }
+
+      // 🚀 Trigger "update" hole manual session sync
+      if (trigger === "update" && session) {
+        if (session.user?.entries !== undefined) {
+          token.entries = session.user.entries;
+        }
+        if (session.user?.dbData) {
+          token.dbData = {
+            ...token.dbData,
+            ...session.user.dbData,
+          };
+        }
       }
       return token;
     },
@@ -135,10 +148,57 @@ export const authOptions = {
       if (token) {
         session.user.backendToken = token.backendToken;
         session.user.dbData = token.dbData;
+        if (token.dbData?.entries !== undefined) {
+          session.user.entries = token.dbData.entries;
+        }
       }
       return session;
     },
   },
+
+  // callbacks: {
+  //   async signIn({ user, account, profile }) {
+  //     try {
+  //       const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "https://zenox-protocol-backend.vercel.app/api";
+  //       const userEmail = user.email || `${account.providerAccountId}@twitter.com`;
+
+  //       // Extracting actual username and followers
+  //       const twitterHandle = profile?.data?.username || user.username || user.name.toLowerCase().replace(/\s+/g, '');
+  //       const twitterFollowers = profile?.data?.public_metrics?.followers_count || 0;
+
+  //       const response = await axios.post(`${backendUrl}/users/sync`, {
+  //         name: user.name,
+  //         email: userEmail,
+  //         image: user.image,
+  //         provider: account.provider,
+  //         providerAccountId: account.providerAccountId,
+  //         username: twitterHandle,
+  //         followersCount: twitterFollowers,
+  //       });
+
+  //       user.backendToken = response.data.token;
+  //       user.dbData = response.data.user;
+  //       return true;
+  //     } catch (error) {
+  //       console.error("Backend Sync Error:", error.response?.data || error.message);
+  //       return true;
+  //     }
+  //   },
+  //   async jwt({ token, user }) {
+  //     if (user) {
+  //       token.backendToken = user.backendToken;
+  //       token.dbData = user.dbData;
+  //     }
+  //     return token;
+  //   },
+  //   async session({ session, token }) {
+  //     if (token) {
+  //       session.user.backendToken = token.backendToken;
+  //       session.user.dbData = token.dbData;
+  //     }
+  //     return session;
+  //   },
+  // },
   pages: {
     signIn: "/",
   },
